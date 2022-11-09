@@ -17,6 +17,5 @@ PGPASSWORD=... psql -U <database_user> -h localhost -d <database>
 **Don't forget to shutdown the pod when done:**
 
 ```bash
-kubectl delete pod postgres-forward-pod -n $NAMESPACE
-kubectl delete configmap postgres-haproxy-port-forward -n $NAMESPACE
+envsubst < manifest.yaml | kubectl delete -n $NAMESPACE -f -
 ```
