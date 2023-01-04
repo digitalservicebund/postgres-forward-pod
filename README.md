@@ -33,7 +33,7 @@ export DATABASE_HOST=...
 # cd into this repository
 
 # create the pod
-envsubst < manifest.yaml | kubectl apply -n $NAMESPACE -f -
+envsubst < manifest.yaml | kubectl apply --kubeconfig <kubeconfig-file> -n $NAMESPACE -f -
 
 # port mapping example: 5000:5432
 kubectl --kubeconfig <kubeconfig-file> port-forward postgres-forward-pod <local-port>:<remote-port> -n $NAMESPACE
