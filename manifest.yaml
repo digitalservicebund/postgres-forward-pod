@@ -29,6 +29,10 @@ metadata:
   name: postgres-forward-pod
   namespace: $NAMESPACE
 spec:
+  securityContext:
+    runAsNonRoot: true
+    seccompProfile:
+      type: RuntimeDefault
   containers:
     - command:
         - haproxy
@@ -41,6 +45,14 @@ spec:
       volumeMounts:
         - mountPath: /usr/local/etc/haproxy/
           name: postgres-haproxy-port-forward
+      securityContext:
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+            - ALL
+        readOnlyRootFilesystem: true
+        runAsUser: 1000
+        runAsGroup: 1000
   restartPolicy: Always
   volumes:
     - name: postgres-haproxy-port-forward
