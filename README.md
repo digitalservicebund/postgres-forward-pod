@@ -6,6 +6,8 @@ This will create a new pod with the sole purpose to connect to the database via 
 
 ```bash
 export NAMESPACE=...
+# either your name or the context/purpose of your action, e.g. migration.
+export SUFFIX=...
 # find this value either in the database configuration in Argo CD or via inspecting the output of 'kubectl -n $NAMESPACE describe configmap'
 export DATABASE_HOST=...
 
@@ -15,7 +17,7 @@ export DATABASE_HOST=...
 envsubst < manifest.yaml | kubectl apply -n $NAMESPACE -f -
 
 # port mapping example: 5000:5432
-kubectl port-forward postgres-forward-pod <local-port>:<remote-port> -n $NAMESPACE
+kubectl port-forward postgres-forward-pod-$SUFFIX <local-port>:<remote-port> -n $NAMESPACE
 ```
 
 ## Connect to the database

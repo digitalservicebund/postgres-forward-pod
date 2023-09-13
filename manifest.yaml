@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   creationTimestamp: null
-  name: postgres-haproxy-port-forward
+  name: postgres-haproxy-port-forward-$SUFFIX
   namespace: $NAMESPACE
 data:
   haproxy.cfg: |-
@@ -25,8 +25,8 @@ kind: Pod
 metadata:
   creationTimestamp: null
   labels:
-    run: postgres-forward-pod
-  name: postgres-forward-pod
+    run: postgres-forward-pod-$SUFFIX
+  name: postgres-forward-pod-$SUFFIX
   namespace: $NAMESPACE
 spec:
   securityContext:
@@ -57,5 +57,5 @@ spec:
   volumes:
     - name: postgres-haproxy-port-forward
       configMap:
-        name: postgres-haproxy-port-forward
+        name: postgres-haproxy-port-forward-$SUFFIX
 status: {}
