@@ -62,3 +62,24 @@ The command `kubectl port-forward` can only connect to pods. The other option to
 * <https://stackoverflow.com/questions/51468491/how-kubectl-port-forward-works>
 * <https://github.com/txn2/kubefwd/issues/35>
 * <https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.27/#create-connect-portforward-pod-v1-core>
+
+## Everything put together in the script `db-forward.sh`
+
+All the steps above are combined into the script `db-forward.sh`.
+
+For each database to forward a separate config file with the following variables must be created:
+
+```cfg
+KUBE_CONTEXT=dev
+NAMESPACE=ris-staging
+SUFFIX=janedoe
+DATABASE_HOST=10.1.2.3
+DATABASE_REMOTE_PORT=5432
+DATABASE_LOCAL_PORT=50001
+```
+
+To start port forwarding run `./db-forward.sh example-database.cfg up`.
+
+To end port forwarding run `./db-forward.sh example-database.cfg down`.
+
+If you run `./db-forward.sh` without any parameter it does not only show usage information but also lists all processes identified as port forwards.
