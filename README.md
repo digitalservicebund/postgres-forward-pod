@@ -10,6 +10,8 @@ export NAMESPACE=...
 export SUFFIX=...
 # find this value either in the database configuration in Argo CD or via inspecting the output of 'kubectl -n $NAMESPACE describe configmap'
 export DATABASE_HOST=...
+# default for postgres is 5432, but could be something else
+export DATABASE_PORT=...
 
 # cd into this repository
 
@@ -74,7 +76,7 @@ KUBE_CONTEXT=dev
 NAMESPACE=ris-staging
 SUFFIX=janedoe
 DATABASE_HOST=10.1.2.3
-DATABASE_REMOTE_PORT=5432
+DATABASE_PORT=5432
 DATABASE_LOCAL_PORT=50001
 ```
 

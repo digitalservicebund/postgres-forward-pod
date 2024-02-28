@@ -18,7 +18,7 @@ data:
 
     backend backend
         mode tcp
-        server upstream $DATABASE_HOST:5432
+        server upstream $DATABASE_HOST:$DATABASE_PORT
 ---
 apiVersion: v1
 kind: Pod

@@ -9,7 +9,7 @@
 # NAMESPACE=ris-staging
 # SUFFIX=janedoe
 # DATABASE_HOST=10.1.2.3
-# DATABASE_REMOTE_PORT=5432
+# DATABASE_PORT=5432
 # DATABASE_LOCAL_PORT=55432
 ### example config end
 
@@ -34,7 +34,7 @@ _load_config() {
 	printf 'NAMESPACE:%s\n' "${NAMESPACE}"
 	printf 'SUFFIX:%s\n' "${SUFFIX}"
 	printf 'DATABASE_HOST:%s\n' "${DATABASE_HOST}"
-	printf 'DATABASE_REMOTE_PORT:%s\n' "${DATABASE_REMOTE_PORT}"
+	printf 'DATABASE_PORT:%s\n' "${DATABASE_PORT}"
 	printf 'DATABASE_LOCAL_PORT:%s\n' "${DATABASE_LOCAL_PORT}"
 }
 
@@ -68,7 +68,7 @@ _check_sub_command_ok() {
 }
 
 _port_forward_for_config() {
-	ps -ef | grep "[k]ubectl --namespace=""${NAMESPACE}"" port-forward pod/postgres-forward-pod-$SUFFIX $DATABASE_LOCAL_PORT:$DATABASE_REMOTE_PORT"
+	ps -ef | grep "[k]ubectl --namespace=""${NAMESPACE}"" port-forward pod/postgres-forward-pod-$SUFFIX $DATABASE_LOCAL_PORT:$DATABASE_PORT"
 }
 
 _run_up() {
@@ -84,10 +84,10 @@ _run_up() {
 	kubectl --namespace="${NAMESPACE}" wait --for=jsonpath='{.status.phase}'=Running "pod/postgres-forward-pod-${SUFFIX}"
 
 	printf 'Starting port forwarding ...\n'
-	nohup kubectl --namespace="${NAMESPACE}" port-forward "pod/postgres-forward-pod-$SUFFIX" "$DATABASE_LOCAL_PORT:$DATABASE_REMOTE_PORT" >/dev/null 2>&1 &
+	nohup kubectl --namespace="${NAMESPACE}" port-forward "pod/postgres-forward-pod-$SUFFIX" "$DATABASE_LOCAL_PORT:$DATABASE_PORT" >/dev/null 2>&1 &
 
 	printf 'Check for running port-foward process:\n'
-	# pgrep --list-full --full "kubectl --namespace="${NAMESPACE}" port-forward pod/postgres-forward-pod-$SUFFIX $DATABASE_LOCAL_PORT:$DATABASE_REMOTE_PORT"
+	# pgrep --list-full --full "kubectl --namespace="${NAMESPACE}" port-forward pod/postgres-forward-pod-$SUFFIX $DATABASE_LOCAL_PORT:$DATABASE_PORT"
 	_port_forward_for_config
 
 	printf 'Done.\n'
@@ -101,7 +101,7 @@ _run_down() {
 	kubectl config use-context "${KUBE_CONTEXT}"
 
 	printf 'Stopping port forwarding ...\n'
-	# pkill --full "kubectl --namespace="${NAMESPACE}" port-forward pod/postgres-forward-pod-$SUFFIX $DATABASE_LOCAL_PORT:$DATABASE_REMOTE_PORT"
+	# pkill --full "kubectl --namespace="${NAMESPACE}" port-forward pod/postgres-forward-pod-$SUFFIX $DATABASE_LOCAL_PORT:$DATABASE_PORT"
 	_port_forward_for_config
 	_port_forward_found=$(_port_forward_for_config | wc -l)
 	if test "${_port_forward_found}" -gt 0; then
