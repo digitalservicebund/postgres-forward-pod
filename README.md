@@ -61,9 +61,9 @@ envsubst < manifest.yaml | kubectl delete -n $NAMESPACE -f -
 
 The command `kubectl port-forward` can only connect to pods. The other option to connect by a service is used as a pod selector and does not connect to a service at all. Therefore port-forwarding does not work with services of type `ExternalName` or by using a combination of `Service`and `EndpointSlice`. For details see the following sources:
 
-* <https://stackoverflow.com/questions/51468491/how-kubectl-port-forward-works>
-* <https://github.com/txn2/kubefwd/issues/35>
-* <https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.27/#create-connect-portforward-pod-v1-core>
+- <https://stackoverflow.com/questions/51468491/how-kubectl-port-forward-works>
+- <https://github.com/txn2/kubefwd/issues/35>
+- <https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.27/#create-connect-portforward-pod-v1-core>
 
 ## Everything put together in the script `db-forward.sh`
 
