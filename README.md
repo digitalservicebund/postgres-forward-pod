@@ -2,6 +2,8 @@
 
 ## Set up a forwarder-pod
 
+At first login to the cluster `dsctl auth kube`.
+
 This will create a new pod with the sole purpose to connect to the database via port forwarding from local to this pod:
 
 ```bash
