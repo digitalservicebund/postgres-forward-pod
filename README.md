@@ -13,13 +13,21 @@ export DATABASE_HOST=...
 # default for postgres is 5432, but could be something else
 export DATABASE_PORT=...
 
+# OR
+cp .env.template .env
+# fill in the vars in .env and run:
+source .env && export $(cut -d= -f1 .env)
+
 # cd into this repository
 
 # create the pod
 envsubst < manifest.yaml | kubectl apply -n $NAMESPACE -f -
 
 # port mapping example: 5000:5432
-kubectl port-forward postgres-forward-pod-$SUFFIX <local-port>:<remote-port> -n $NAMESPACE
+kubectl port-forward postgres-forward-pod-$SUFFIX $DATABASE_LOCAL_PORT:$DATABASE_PORT -n $NAMESPACE
+
+# check if your pod is up
+kubectl get pods -n $NAMESPACE
 ```
 
 ## Connect to the database
@@ -36,8 +44,10 @@ kubectl -n $NAMESPACE get secret <secret-name> -o jsonpath='{.data}'
 This gives you something like: `{"db.password":"","db.user":""}`, which now needs to be decoded:
 
 ```bash
-echo "<db.user>" | base64 --decode
-echo "<db.password>" | base64 --decode
+# note the space in front of the following commands is on purpose
+# to avoid an entry in the history. Please check afterwards by typing history
+ echo "<db.user>" | base64 --decode
+ echo "<db.password>" | base64 --decode
 # note that the last "%" is not part of the decoded string
 ```
 
