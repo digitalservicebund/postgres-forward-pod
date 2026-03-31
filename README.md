@@ -97,3 +97,12 @@ To start port forwarding run `./db-forward.sh example-database.cfg up`.
 To end port forwarding run `./db-forward.sh example-database.cfg down`.
 
 If you run `./db-forward.sh` without any parameter it does not only show usage information but also lists all processes identified as port forwards.
+
+## Git Hooks
+
+For the provided Git hooks you will need to install [lefthook](https://github.com/evilmartians/lefthook/blob/master/docs/full_guide.md) (git hook manager) and [talisman](https://thoughtworks.github.io/talisman/docs) (secrets scanner):
+
+```bash
+brew install lefthook talisman node
+lefthook install
+```

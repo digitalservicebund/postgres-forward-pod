@@ -1,0 +1,6 @@
+fileignoreconfig:
+  - filename: README.md
+    allowed_patterns:
+      - password
+      - PGPASSWORD
+      - secret
