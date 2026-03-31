@@ -1,1 +1,6 @@
-.env
+*
+!.env.template
+!db-forward.sh
+!LICENSE
+!manifest.yaml
+!README.md
