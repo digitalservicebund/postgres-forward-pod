@@ -13,7 +13,7 @@ _load_config() {
 }
 
 # generate random username
-PGUSER="temp_$(tr -dc 'a-z0-9' </dev/urandom | head -c 12)"
+PGUSER="temp_$(hexdump -n 6 -e '6/1 "%02x"' /dev/urandom)"
 # command line args
 CFG=$1
 # mode can be shell or background
