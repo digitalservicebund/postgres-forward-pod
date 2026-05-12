@@ -44,7 +44,9 @@ To end port forwarding run `./db-forward.sh example-database.cfg down`.
 
 If you run `./db-forward.sh` without any parameter it does not only show usage information but also lists all processes identified as port forwards.
 
-## Set up a forwarder-pod
+## Deprecated: Manual steps
+
+### Set up a forwarder-pod
 
 At first login to the cluster `dsctl auth kube`.
 
@@ -76,7 +78,7 @@ kubectl port-forward postgres-forward-pod-$SUFFIX $DATABASE_LOCAL_PORT:$DATABASE
 kubectl get pods -n $NAMESPACE
 ```
 
-## Connect to the database
+### Connect to the database
 
 Now you need to retrieve the username and password to access the database via the forwarded port:
 
@@ -105,7 +107,7 @@ Now you have the credentials and can connect to the database by using the UI in 
 PGPASSWORD=<password> psql -U <username> -h localhost -d <databasename> -p <local-port>
 ```
 
-## Shut down the forwarder-pod
+### Shut down the forwarder-pod
 
 Once you are done, it's important you remember to shut down the pod you created:
 
@@ -113,7 +115,7 @@ Once you are done, it's important you remember to shut down the pod you created:
 envsubst < manifest.yaml | kubectl delete -n $NAMESPACE -f -
 ```
 
-## Why using a forwarder-pod?
+### Why using a forwarder-pod?
 
 The command `kubectl port-forward` can only connect to pods. The other option to connect by a service is used as a pod selector and does not connect to a service at all. Therefore port-forwarding does not work with services of type `ExternalName` or by using a combination of `Service`and `EndpointSlice`. For details see the following sources:
 
