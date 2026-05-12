@@ -1,5 +1,49 @@
 # Postgres Forward Pod
 
+## Everything put together in a script `access-db.sh`
+
+Platform provides a script to generate credentials and spin up a forwarding pod, this script is called `access-db.sh`.
+
+For each database to forward a separate config file with the following variables must be created:
+
+```cfg
+PROJECT_ID=aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa
+INSTANCE_ID=eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee
+KUBE_CONTEXT=dev
+NAMESPACE=ris-staging
+SUFFIX=janedoe
+DATABASE_HOST=10.1.2.3
+DATABASE_PORT=5432
+DATABASE_LOCAL_PORT=50001
+```
+
+To start port forwarding run `./access-db.sh example-database.cfg`.
+
+To end port forwarding simply `ctrl+c` the script.
+
+If you simply wish to use `psql` then you can run `./access-db.sh example-database.cfg database-name` and it will open the `psql` shell for you and as before, once the shell exits, it will delete the temporary user and tear down the pod.
+
+## Deprecated: `db-forward.sh`
+
+All the steps above are combined into the script `db-forward.sh`.
+
+For each database to forward a separate config file with the following variables must be created:
+
+```cfg
+KUBE_CONTEXT=dev
+NAMESPACE=ris-staging
+SUFFIX=janedoe
+DATABASE_HOST=10.1.2.3
+DATABASE_PORT=5432
+DATABASE_LOCAL_PORT=50001
+```
+
+To start port forwarding run `./db-forward.sh example-database.cfg up`.
+
+To end port forwarding run `./db-forward.sh example-database.cfg down`.
+
+If you run `./db-forward.sh` without any parameter it does not only show usage information but also lists all processes identified as port forwards.
+
 ## Set up a forwarder-pod
 
 At first login to the cluster `dsctl auth kube`.
@@ -76,50 +120,6 @@ The command `kubectl port-forward` can only connect to pods. The other option to
 - <https://stackoverflow.com/questions/51468491/how-kubectl-port-forward-works>
 - <https://github.com/txn2/kubefwd/issues/35>
 - <https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.27/#create-connect-portforward-pod-v1-core>
-
-## Everything put together in a script `access-db.sh`
-
-Platform provides a script to generate credentials and spin up a forwarding pod, this script is called `access-db.sh`.
-
-For each database to forward a separate config file with the following variables must be created:
-
-```cfg
-PROJECT_ID=aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa
-INSTANCE_ID=eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee
-KUBE_CONTEXT=dev
-NAMESPACE=ris-staging
-SUFFIX=janedoe
-DATABASE_HOST=10.1.2.3
-DATABASE_PORT=5432
-DATABASE_LOCAL_PORT=50001
-```
-
-To start port forwarding run `./access-db.sh example-database.cfg`.
-
-To end port forwarding simply `ctrl+c` the script.
-
-If you simply wish to use `psql` then you can run `./access-db.sh example-database.cfg database-name` and it will open the `psql` shell for you and as before, once the shell exits, it will delete the temporary user and tear down the pod.
-
-## Deprecated: `db-forward.sh`
-
-All the steps above are combined into the script `db-forward.sh`.
-
-For each database to forward a separate config file with the following variables must be created:
-
-```cfg
-KUBE_CONTEXT=dev
-NAMESPACE=ris-staging
-SUFFIX=janedoe
-DATABASE_HOST=10.1.2.3
-DATABASE_PORT=5432
-DATABASE_LOCAL_PORT=50001
-```
-
-To start port forwarding run `./db-forward.sh example-database.cfg up`.
-
-To end port forwarding run `./db-forward.sh example-database.cfg down`.
-
-If you run `./db-forward.sh` without any parameter it does not only show usage information but also lists all processes identified as port forwards.
 
 ## Git Hooks
 
