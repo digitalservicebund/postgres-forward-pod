@@ -28,6 +28,13 @@ fi
 # load config from file, will load unnecessary vars that are used by child script but it doesn't matter
 _load_config "$CFG"
 
+kubectl config use-context "${KUBE_CONTEXT}" >/dev/null || {
+    exit 1
+}
+kubectl get namespace "$NAMESPACE" >/dev/null || {
+    exit 1
+}
+
 if [ -z "$PROJECT_ID" ] || [ -z "$DATABASE_NAME" ]; then
     echo "Config must define PROJECT_ID and DATABASE_NAME."
     exit 1
@@ -89,6 +96,7 @@ bg)
         printf "# username: %-*s #\n" "$_mlen" "$PGUSER"
         printf "# password: %-*s #\n" "$_mlen" "$PGPASSWORD"
         printf '%s\n' "$_border"
+        printf "You can connect to the database on localhost:$DATABASE_LOCAL_PORT with the above credentials.\n"
         ;;
     esac
     echo "Running in background mode. Press Ctrl+C to stop and cleanup user and pod."
