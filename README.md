@@ -23,6 +23,15 @@ To end port forwarding simply `ctrl+c` the script.
 
 If you simply wish to use `psql` then you can run `./access-db.sh example-database.cfg database-name` and it will open the `psql` shell for you and as before, once the shell exits, it will delete the temporary user and tear down the pod.
 
+If you need to connect with a specific user, then you can do this by specifying additionally inside your config file:
+
+```cfg
+DB_USERNAME=username
+SECRET_NAME=secret-name
+```
+
+This assumes that you are using secret manager and that your secret will be stored under the key "username_password" in the secret. The secret will then be retrieved and decoded and used to connect to the database if you are using `psql` mode or you will be able to print the credentials to the console if you wish to use another tool. This ensures that you keep the credentials away from a file and are unlikely to commit them to a repository by mistake, by printing them into your console we keep them from your shell's history too.
+
 ## Deprecated: `db-forward.sh`
 
 All the steps above are combined into the script `db-forward.sh`.
