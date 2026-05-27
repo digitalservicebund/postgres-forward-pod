@@ -8,20 +8,17 @@ For each database to forward a separate config file with the following variables
 
 ```cfg
 PROJECT_ID=aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa
-INSTANCE_ID=eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee
-KUBE_CONTEXT=dev
+KUBE_CONTEXT=non-prod
 NAMESPACE=ris-staging
-SUFFIX=janedoe
-DATABASE_HOST=10.1.2.3
-DATABASE_PORT=5432
 DATABASE_LOCAL_PORT=50001
+DATABASE_NAME=database-name
 ```
 
-To start port forwarding run `./access-db.sh example-database.cfg`.
+To start port forwarding run `./access-db.sh example-database.cfg [bg|psql]`.
 
-To end port forwarding simply `ctrl+c` the script.
+If you have run with `bg` at the end then the script will run in the background after printing the credentials of the temporary user. To end port forwarding simply `ctrl+c` the script.
 
-If you simply wish to use `psql` then you can run `./access-db.sh example-database.cfg database-name` and it will open the `psql` shell for you and as before, once the shell exits, it will delete the temporary user and tear down the pod.
+If you have run with `psql` at the end then you can run it will open the `psql` shell for you and as before, once the shell exits, it will delete the temporary user and tear down the pod.
 
 If you need to connect with a specific user, then you can do this by specifying additionally inside your config file:
 
