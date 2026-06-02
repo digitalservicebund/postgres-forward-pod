@@ -1,6 +1,6 @@
 # Postgres Forward Pod
 
-## Everything put together in a script `access-db.sh`
+## Automated credential management and port forwarding with `access-db.sh`
 
 Platform provides a script to generate credentials and spin up a forwarding pod, this script is called `access-db.sh`.
 
@@ -13,6 +13,8 @@ NAMESPACE=ris-staging
 DATABASE_LOCAL_PORT=50001
 DATABASE_NAME=database-name
 ```
+
+`PROJECT_ID` is the STACKIT project ID. You can find it in the [STACKIT portal](https://portal.stackit.cloud/) under **Projects** — select your project and copy the ID shown in the project details or from the URL.
 
 To start port forwarding run `./access-db.sh example-database.cfg [bg|psql]`.
 

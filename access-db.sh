@@ -14,14 +14,14 @@ _load_config() {
 
 # generate random username
 RANDOM_SUFFIX=$(hexdump -n 6 -e '6/1 "%02x"' /dev/urandom)
-PGUSER="temp_$RANDOM_SUFFIX"
+PGUSER="temp_$(whoami)_$RANDOM_SUFFIX"
 # command line args
 CFG=$1
 # mode can be psql or background
 MODE=${2}
 
 if [ -z "$CFG" ]; then
-    echo "Usage: ./access-db.sh <config_file> [database_name]\nIf database_name specified, launches psql shell, otherwise, runs in background mode (i.e. for use with other tools like IntelliJ)."
+    echo "Usage: ./access-db.sh <config_file> [psql|bg]\nIf mode is 'psql', launches a psql shell. If mode is 'bg', runs in background mode (i.e. for use with other tools like IntelliJ)."
     exit 1
 fi
 
@@ -42,6 +42,10 @@ fi
 
 # extract instance id from stackit command line
 INSTANCE_ID=$(stackit postgresqlflex instance list --project-id="$PROJECT_ID" -o json | jq -r --arg name "$DATABASE_NAME" '.[] | select(.name == $name) | .id')
+if [ -z "$INSTANCE_ID" ]; then
+    echo "Error: Could not find STACKIT instance '${DATABASE_NAME}' in project '${PROJECT_ID}'."
+    exit 1
+fi
 
 if [ -n "$SECRET_NAME" ]; then
     PGUSER=$DB_USERNAME
