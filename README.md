@@ -1,6 +1,60 @@
 # Postgres Forward Pod
 
-## Set up a forwarder-pod
+## Automated credential management and port forwarding with `access-db.sh`
+
+Platform provides a script to generate credentials and spin up a forwarding pod, this script is called `access-db.sh`.
+
+For each database to forward a separate config file with the following variables must be created:
+
+```cfg
+PROJECT_ID=aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa
+KUBE_CONTEXT=non-prod
+NAMESPACE=ris-staging
+DATABASE_LOCAL_PORT=50001
+DATABASE_NAME=database-name
+```
+
+`PROJECT_ID` is the STACKIT project ID. You can find it in the [STACKIT portal](https://portal.stackit.cloud/) under **Projects** — select your project and copy the ID shown in the project details or from the URL.
+
+To start port forwarding run `./access-db.sh example-database.cfg [bg|psql]`.
+
+If you have run with `bg` at the end then the script will run in the background after printing the credentials of the temporary user. To end port forwarding simply `ctrl+c` the script.
+
+If you have run with `psql` at the end then you can run it will open the `psql` shell for you and as before, once the shell exits, it will delete the temporary user and tear down the pod.
+
+If you need to connect with a specific user, then you can do this by specifying additionally inside your config file:
+
+```cfg
+DB_USERNAME=username
+SECRET_NAME=secret-name
+```
+
+This assumes that you are using secret manager and that your secret will be stored under the key "username_password" in the secret. The secret will then be retrieved and decoded and used to connect to the database if you are using `psql` mode or you will be able to print the credentials to the console if you wish to use another tool. This ensures that you keep the credentials away from a file and are unlikely to commit them to a repository by mistake, by printing them into your console we keep them from your shell's history too.
+
+## Deprecated: `db-forward.sh`
+
+All the steps above are combined into the script `db-forward.sh`.
+
+For each database to forward a separate config file with the following variables must be created:
+
+```cfg
+KUBE_CONTEXT=dev
+NAMESPACE=ris-staging
+SUFFIX=janedoe
+DATABASE_HOST=10.1.2.3
+DATABASE_PORT=5432
+DATABASE_LOCAL_PORT=50001
+```
+
+To start port forwarding run `./db-forward.sh example-database.cfg up`.
+
+To end port forwarding run `./db-forward.sh example-database.cfg down`.
+
+If you run `./db-forward.sh` without any parameter it does not only show usage information but also lists all processes identified as port forwards.
+
+## Deprecated: Manual steps
+
+### Set up a forwarder-pod
 
 At first login to the cluster `dsctl auth kube`.
 
@@ -32,7 +86,7 @@ kubectl port-forward postgres-forward-pod-$SUFFIX $DATABASE_LOCAL_PORT:$DATABASE
 kubectl get pods -n $NAMESPACE
 ```
 
-## Connect to the database
+### Connect to the database
 
 Now you need to retrieve the username and password to access the database via the forwarded port:
 
@@ -61,7 +115,7 @@ Now you have the credentials and can connect to the database by using the UI in 
 PGPASSWORD=<password> psql -U <username> -h localhost -d <databasename> -p <local-port>
 ```
 
-## Shut down the forwarder-pod
+### Shut down the forwarder-pod
 
 Once you are done, it's important you remember to shut down the pod you created:
 
@@ -69,34 +123,13 @@ Once you are done, it's important you remember to shut down the pod you created:
 envsubst < manifest.yaml | kubectl delete -n $NAMESPACE -f -
 ```
 
-## Why using a forwarder-pod?
+### Why using a forwarder-pod?
 
 The command `kubectl port-forward` can only connect to pods. The other option to connect by a service is used as a pod selector and does not connect to a service at all. Therefore port-forwarding does not work with services of type `ExternalName` or by using a combination of `Service`and `EndpointSlice`. For details see the following sources:
 
 - <https://stackoverflow.com/questions/51468491/how-kubectl-port-forward-works>
 - <https://github.com/txn2/kubefwd/issues/35>
 - <https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.27/#create-connect-portforward-pod-v1-core>
-
-## Everything put together in the script `db-forward.sh`
-
-All the steps above are combined into the script `db-forward.sh`.
-
-For each database to forward a separate config file with the following variables must be created:
-
-```cfg
-KUBE_CONTEXT=dev
-NAMESPACE=ris-staging
-SUFFIX=janedoe
-DATABASE_HOST=10.1.2.3
-DATABASE_PORT=5432
-DATABASE_LOCAL_PORT=50001
-```
-
-To start port forwarding run `./db-forward.sh example-database.cfg up`.
-
-To end port forwarding run `./db-forward.sh example-database.cfg down`.
-
-If you run `./db-forward.sh` without any parameter it does not only show usage information but also lists all processes identified as port forwards.
 
 ## Git Hooks
 
