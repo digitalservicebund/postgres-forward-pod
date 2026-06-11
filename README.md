@@ -11,6 +11,7 @@ PROJECT_ID=aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa
 KUBE_CONTEXT=non-prod
 NAMESPACE=ris-staging
 DATABASE_LOCAL_PORT=50001
+INSTANCE_NAME=instance-name
 DATABASE_NAME=database-name
 ```
 
