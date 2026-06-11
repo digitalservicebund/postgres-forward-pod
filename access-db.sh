@@ -35,15 +35,15 @@ kubectl get namespace "$NAMESPACE" >/dev/null || {
     exit 1
 }
 
-if [ -z "$PROJECT_ID" ] || [ -z "$DATABASE_NAME" ]; then
-    echo "Config must define PROJECT_ID and DATABASE_NAME."
+if [ -z "$PROJECT_ID" ] || [ -z "$INSTANCE_NAME" ]; then
+    echo "Config must define PROJECT_ID and INSTANCE_NAME."
     exit 1
 fi
 
 # extract instance id from stackit command line
-INSTANCE_ID=$(stackit postgresqlflex instance list --project-id="$PROJECT_ID" -o json | jq -r --arg name "$DATABASE_NAME" '.[] | select(.name == $name) | .id')
+INSTANCE_ID=$(stackit postgresqlflex instance list --project-id="$PROJECT_ID" -o json | jq -r --arg name "$INSTANCE_NAME" '.[] | select(.name == $name) | .id')
 if [ -z "$INSTANCE_ID" ]; then
-    echo "Error: Could not find STACKIT instance '${DATABASE_NAME}' in project '${PROJECT_ID}'."
+    echo "Error: Could not find STACKIT instance '${INSTANCE_NAME}' in project '${PROJECT_ID}'."
     exit 1
 fi
 
