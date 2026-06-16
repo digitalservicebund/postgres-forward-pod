@@ -39,7 +39,7 @@ spec:
         - -f
         - /usr/local/etc/haproxy/haproxy.cfg
         - -V
-      image: haproxy:1.7-alpine
+      image: haproxy:3.4-alpine
       name: postgres-forward-pod
       resources: {}
       volumeMounts:
