@@ -1,4 +1,5 @@
 *
+!.github
 !.env.template
 !db-forward.sh
 !LICENSE
