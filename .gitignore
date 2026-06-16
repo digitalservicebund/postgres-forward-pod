@@ -1,5 +1,4 @@
 *
-!.github
 !.env.template
 !db-forward.sh
 !LICENSE
@@ -8,3 +7,4 @@
 !lefthook.yml
 !.talismanrc
 !access-db.sh
+!.github/dependabot.yml
