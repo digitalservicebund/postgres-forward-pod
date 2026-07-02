@@ -83,6 +83,9 @@ _run_up() {
 	printf 'Waiting for pod to run ...\n'
 	kubectl --namespace="${NAMESPACE}" wait --for=jsonpath='{.status.phase}'=Running "pod/postgres-forward-pod-${SUFFIX}"
 
+	printf 'Waiting for pod to be ready ...\n'
+	kubectl --namespace="${NAMESPACE}" wait --for=condition=Ready --timeout=120s "pod/postgres-forward-pod-${SUFFIX}"
+
 	printf 'Starting port forwarding ...\n'
 	nohup kubectl --namespace="${NAMESPACE}" port-forward "pod/postgres-forward-pod-$SUFFIX" "$DATABASE_LOCAL_PORT:$DATABASE_PORT" >/dev/null 2>&1 &
 
