@@ -42,6 +42,12 @@ spec:
       image: haproxy:3.4-alpine
       name: postgres-forward-pod
       resources: {}
+      readinessProbe:
+        tcpSocket:
+          port: 5432
+        initialDelaySeconds: 1
+        periodSeconds: 2
+        failureThreshold: 30
       volumeMounts:
         - mountPath: /usr/local/etc/haproxy/
           name: postgres-haproxy-port-forward
