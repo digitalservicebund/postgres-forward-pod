@@ -5,7 +5,7 @@ metadata:
   name: postgres-haproxy-port-forward-$SUFFIX
   namespace: $NAMESPACE
 data:
-  haproxy.cfg: |-
+  haproxy.cfg: |
     global
     defaults
         timeout connect 30s
