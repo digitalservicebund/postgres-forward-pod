@@ -4,6 +4,8 @@
 
 Platform provides a script to generate credentials and spin up a forwarding pod, this script is called `access-db.sh`.
 
+Install the [STACKIT CLI](https://docs.stackit.cloud/stackit/en/getting-started-with-the-stackit-cli-10125045.html) and authenticate before running the script.
+
 For each database to forward a separate config file with the following variables must be created:
 
 ```cfg
