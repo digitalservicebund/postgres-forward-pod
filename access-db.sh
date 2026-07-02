@@ -20,7 +20,7 @@ CFG=$1
 # mode can be psql or background
 MODE=${2}
 
-if [ -z "$CFG" ]; then
+if [ -z "$CFG" ] || [ -z "$MODE" ]; then
     echo "Usage: ./access-db.sh <config_file> [psql|bg]\nIf mode is 'psql', launches a psql shell. If mode is 'bg', runs in background mode (i.e. for use with other tools like IntelliJ)."
     exit 1
 fi
