@@ -2,9 +2,9 @@
 
 ## Automated credential management and port forwarding with `access-db.sh`
 
-Platform provides a script to generate credentials and spin up a forwarding pod, this script is called `access-db.sh`.
+This repo provides `access-db.sh` to generate credentials and spin up a forwarding pod.
 
-Install the [STACKIT CLI](https://docs.stackit.cloud/stackit/en/getting-started-with-the-stackit-cli-10125045.html) and authenticate before running the script.
+Before running the script: Install the [STACKIT CLI](https://github.com/stackitcloud/stackit-cli/blob/main/INSTALLATION.md) and if needed authenticate (`stackit auth login`).
 
 For each database to forward a separate config file with the following variables must be created:
 
@@ -17,7 +17,7 @@ INSTANCE_NAME=instance-name
 DATABASE_NAME=database-name
 ```
 
-`PROJECT_ID` is the STACKIT project ID. You can find it in the [STACKIT portal](https://portal.stackit.cloud/) under **Projects** — select your project and copy the ID shown in the project details or from the URL.
+`PROJECT_ID` is the STACKIT project ID. You can find it in the [STACKIT portal](https://portal.stackit.cloud/) __Resource Manager__ — navigate through the tree of projects and copy the UUID from `ID`-column.
 
 To start port forwarding run `./access-db.sh example-database.cfg [bg|psql]`.
 
@@ -32,7 +32,14 @@ DB_USERNAME=username
 SECRET_NAME=secret-name
 ```
 
-This assumes that you are using secret manager and that your secret will be stored under the key "username_password" in the secret. The secret will then be retrieved and decoded and used to connect to the database if you are using `psql` mode or you will be able to print the credentials to the console if you wish to use another tool. This ensures that you keep the credentials away from a file and are unlikely to commit them to a repository by mistake, by printing them into your console we keep them from your shell's history too.
+This assumes that your application is using stackit secrets manager and that your secret will be stored under the key "\[username\]_password" in the secret.
+
+If the secret has a different name \(i.e. DB_POSTGRESDB_PASSWORD\), then add:
+```cfg
+SECRET_DB_PASSWORD_KEY
+```
+
+The secret will then be retrieved and decoded and used to connect to the database if you are using `psql` mode or you will be able to print the credentials to the console if you wish to use another tool. This ensures that you keep the credentials away from a file and are unlikely to commit them to a repository by mistake, by printing them into your console we keep them from your shell's history too.
 
 ## Deprecated: `db-forward.sh`
 

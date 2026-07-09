@@ -49,7 +49,8 @@ fi
 
 if [ -n "$SECRET_NAME" ]; then
     PGUSER=$DB_USERNAME
-    PGPASSWORD=$(kubectl get secret "$SECRET_NAME" --namespace "$NAMESPACE" -o jsonpath="{.data.${DB_USERNAME}_password}" | base64 --decode)
+    DB_PW_KEY="${SECRET_DB_PASSWORD_KEY:-${DB_USERNAME}_password}"
+    PGPASSWORD=$(kubectl get secret "$SECRET_NAME" --namespace "$NAMESPACE" -o jsonpath="{.data.${DB_PW_KEY}}" | base64 --decode)
     # extract user id from stackit command line
     USER_ID=$(stackit postgresqlflex user list --project-id="$PROJECT_ID" --instance-id="$INSTANCE_ID" -o json | jq -r --arg name "$DB_USERNAME" '.[] | select(.username == $name) | .id')
 else
