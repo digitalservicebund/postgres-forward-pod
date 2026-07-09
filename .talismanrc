@@ -4,3 +4,4 @@ fileignoreconfig:
       - password
       - PGPASSWORD
       - secret
+      - secrets
