@@ -36,7 +36,7 @@ This assumes that your application is using stackit secrets manager and that you
 
 If the secret has a different name \(i.e. DB_POSTGRESDB_PASSWORD\), then add:
 ```cfg
-SECRET_DB_PASSWORD_KEY
+SECRET_DB_PASSWORD_KEY=DB_POSTGRESDB_PASSWORD
 ```
 
 The secret will then be retrieved and decoded and used to connect to the database if you are using `psql` mode or you will be able to print the credentials to the console if you wish to use another tool. This ensures that you keep the credentials away from a file and are unlikely to commit them to a repository by mistake, by printing them into your console we keep them from your shell's history too.
