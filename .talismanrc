@@ -3,5 +3,15 @@ fileignoreconfig:
     allowed_patterns:
       - password
       - PGPASSWORD
+      - DB_POSTGRESDB_PASSWORD
       - secret
       - secrets
+  - filename: access-db.sh
+    allowed_patterns:
+      - password
+      - PGPASSWORD
+      - secret
+      - secrets
+      - DB_PW_KEY
+      - SECRET_NAME
+      - SECRET_DB_PASSWORD_KEY
