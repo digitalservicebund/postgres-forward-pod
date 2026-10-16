@@ -4,7 +4,13 @@
 
 This repo provides `access-db.sh` to generate credentials and spin up a forwarding pod.
 
-Before running the script: Install the [STACKIT CLI](https://github.com/stackitcloud/stackit-cli/blob/main/INSTALLATION.md) and if needed authenticate (`stackit auth login`).
+Before running the script: Install the [STACKIT CLI](https://github.com/stackitcloud/stackit-cli/blob/main/INSTALLATION.md) and if needed authenticate (`stackit auth login`). Additionally `jq`, `kubectl` and `envsubst` are required.
+
+### Supported STACKIT CLI versions
+
+`access-db.sh` requires **STACKIT CLI >= 0.74.0** (tested with 0.74.0 and 0.75.0). The script checks the installed version (`stackit --version`) on startup and aborts with an error message if the version is older or cannot be determined. Update with e.g. `brew upgrade stackit`.
+
+For older STACKIT CLI versions use a version of this repository before this change.
 
 For each database to forward a separate config file with the following variables must be created:
 

@@ -12,6 +12,18 @@ _load_config() {
     done <"${_config}"
 }
 
+# Minimum supported STACKIT CLI version.
+# Needs to be updated when new features are used or changes in the outputs require a newer version of the CLI.
+MIN_STACKIT_CLI_VERSION="0.74.0"
+
+_check_stackit_cli() {
+    _version=$(stackit --version 2>/dev/null | awk '/^Version:/ {print $2}')
+    if [ "$(printf '%s\n' "$MIN_STACKIT_CLI_VERSION" "$_version" | sort -V | head -n 1)" != "$MIN_STACKIT_CLI_VERSION" ] || [ -z "$_version" ]; then
+        echo "Error: STACKIT CLI >= ${MIN_STACKIT_CLI_VERSION} required (found: ${_version:-none}). Please install/update the STACKIT CLI."
+        exit 1
+    fi
+}
+
 # generate random username
 RANDOM_SUFFIX=$(hexdump -n 6 -e '6/1 "%02x"' /dev/urandom)
 PGUSER="temp_$(whoami)_$RANDOM_SUFFIX"
@@ -24,6 +36,8 @@ if [ -z "$CFG" ] || [ -z "$MODE" ]; then
     echo "Usage: ./access-db.sh <config_file> [psql|bg]\nIf mode is 'psql', launches a psql shell. If mode is 'bg', runs in background mode (i.e. for use with other tools like IntelliJ)."
     exit 1
 fi
+
+_check_stackit_cli
 
 # load config from file, will load unnecessary vars that are used by child script but it doesn't matter
 _load_config "$CFG"
@@ -41,7 +55,7 @@ if [ -z "$PROJECT_ID" ] || [ -z "$INSTANCE_NAME" ]; then
 fi
 
 # extract instance id from stackit command line
-INSTANCE_ID=$(stackit postgresqlflex instance list --project-id="$PROJECT_ID" -o json | jq -r --arg name "$INSTANCE_NAME" '.[] | select(.name == $name) | .id')
+INSTANCE_ID=$(stackit postgresflex instance list --project-id="$PROJECT_ID" -o json | jq -r --arg name "$INSTANCE_NAME" '.[] | select(.name == $name) | .id')
 if [ -z "$INSTANCE_ID" ]; then
     echo "Error: Could not find STACKIT instance '${INSTANCE_NAME}' in project '${PROJECT_ID}'."
     exit 1
@@ -56,16 +70,15 @@ if [ -n "$SECRET_NAME" ]; then
 else
     # create user
     USER_DETAILS=$(stackit postgresqlflex user create --username "$PGUSER" --project-id "$PROJECT_ID" --instance-id "$INSTANCE_ID" --output-format json -y)
-    USER_ID=$(echo "$USER_DETAILS" | jq -r '.item.id')
-    PGPASSWORD=$(echo "$USER_DETAILS" | jq -r '.item.password')
+    USER_ID=$(echo "$USER_DETAILS" | jq -r '.id')
+    PGPASSWORD=$(echo "$USER_DETAILS" | jq -r '.password')
 fi
 
-# extract host and port from the user
-USER_BLOB=$(stackit postgresqlflex user describe "$USER_ID" --project-id="$PROJECT_ID" --instance-id="$INSTANCE_ID" -o json)
-
+# extract host and port from the instance
+USER_BLOB=$(stackit postgresqlflex instance describe "$INSTANCE_ID" --project-id="$PROJECT_ID" -o json)
 # export vars for child script
-export DATABASE_HOST=$(echo $USER_BLOB | jq -r '.host')
-export DATABASE_PORT=$(echo $USER_BLOB | jq -r '.port')
+export DATABASE_HOST=$(echo $USER_BLOB | jq -r '.connectionInfo.write.host')
+export DATABASE_PORT=$(echo $USER_BLOB | jq -r '.connectionInfo.write.port')
 export SUFFIX="$RANDOM_SUFFIX" # matches temporary user if being used
 
 # cleanup deletes the user and tears down the pod, runs on all exits with a trap
