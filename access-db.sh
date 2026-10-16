@@ -56,16 +56,16 @@ if [ -n "$SECRET_NAME" ]; then
 else
     # create user
     USER_DETAILS=$(stackit postgresqlflex user create --username "$PGUSER" --project-id "$PROJECT_ID" --instance-id "$INSTANCE_ID" --output-format json -y)
-    USER_ID=$(echo "$USER_DETAILS" | jq -r '.item.id')
-    PGPASSWORD=$(echo "$USER_DETAILS" | jq -r '.item.password')
+    USER_ID=$(echo "$USER_DETAILS" | jq -r '.id')
+    PGPASSWORD=$(echo "$USER_DETAILS" | jq -r '.password')
 fi
 
-# extract host and port from the user
-USER_BLOB=$(stackit postgresqlflex user describe "$USER_ID" --project-id="$PROJECT_ID" --instance-id="$INSTANCE_ID" -o json)
-
+# extract host and port from the instance
+USER_BLOB=$(stackit postgresqlflex instance describe "$INSTANCE_ID" --project-id="$PROJECT_ID" -o json)
 # export vars for child script
-export DATABASE_HOST=$(echo $USER_BLOB | jq -r '.host')
-export DATABASE_PORT=$(echo $USER_BLOB | jq -r '.port')
+echo $USER_BLOB
+export DATABASE_HOST=$(echo $USER_BLOB | jq -r '.connectionInfo.write.host')
+export DATABASE_PORT=$(echo $USER_BLOB | jq -r '.connectionInfo.write.port')
 export SUFFIX="$RANDOM_SUFFIX" # matches temporary user if being used
 
 # cleanup deletes the user and tears down the pod, runs on all exits with a trap
