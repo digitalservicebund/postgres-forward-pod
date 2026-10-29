@@ -52,7 +52,7 @@ if [ -n "$SECRET_NAME" ]; then
     DB_PW_KEY="${SECRET_DB_PASSWORD_KEY:-${DB_USERNAME}_password}"
     PGPASSWORD=$(kubectl get secret "$SECRET_NAME" --namespace "$NAMESPACE" -o jsonpath="{.data.${DB_PW_KEY}}" | base64 --decode)
     # extract user id from stackit command line
-    USER_ID=$(stackit postgresqlflex user list --project-id="$PROJECT_ID" --instance-id="$INSTANCE_ID" -o json | jq -r --arg name "$DB_USERNAME" '.[] | select(.username == $name) | .id')
+    USER_ID=$(stackit postgresqlflex user list --project-id="$PROJECT_ID" --instance-id="$INSTANCE_ID" -o json | jq -r --arg name "$DB_USERNAME" '.[] | select(.name == $name) | .id')
 else
     # create user
     USER_DETAILS=$(stackit postgresqlflex user create --username "$PGUSER" --project-id "$PROJECT_ID" --instance-id "$INSTANCE_ID" --output-format json -y)
@@ -60,12 +60,12 @@ else
     PGPASSWORD=$(echo "$USER_DETAILS" | jq -r '.item.password')
 fi
 
-# extract host and port from the user
-USER_BLOB=$(stackit postgresqlflex user describe "$USER_ID" --project-id="$PROJECT_ID" --instance-id="$INSTANCE_ID" -o json)
+# extract host and port
+DB_INSTANCE_DETAILS=$(stackit postgresqlflex instance describe --project-id="$PROJECT_ID" $INSTANCE_ID -o json)
 
 # export vars for child script
-export DATABASE_HOST=$(echo $USER_BLOB | jq -r '.host')
-export DATABASE_PORT=$(echo $USER_BLOB | jq -r '.port')
+export DATABASE_HOST=$(echo $DB_INSTANCE_DETAILS | jq -r '.connectionInfo.write.host')
+export DATABASE_PORT=$(echo $DB_INSTANCE_DETAILS | jq -r '.connectionInfo.write.port')
 export SUFFIX="$RANDOM_SUFFIX" # matches temporary user if being used
 
 # cleanup deletes the user and tears down the pod, runs on all exits with a trap
